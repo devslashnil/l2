@@ -26,7 +26,8 @@ package pattern
 
 	Реальные примеры:
 	- Структура конкретного сервиса это фасад для других сервисов, а также структур репозитория, кэширования и т.д.
-	-
+	- Структура Engine в Gin. Engine is the framework's instance, it contains the muxer,
+	middleware and configuration settings.
 */
 
 // Facade предоставляющий унифицированный доступ для структур SubSystem1, SubSystem2
