@@ -51,6 +51,62 @@ func main() {
 
 Ответ:
 ```
+1
+2
+3
+4
+5
+6
+7
+8
+0
+0
+0
 ...
+```
 
+- После того как каналы закрываются в ```select``` начинается чтение дефолтного значения типа канала, т.е. ```0```.
+Таким образом ```merge``` будет бесконечно читать с закрытых каналов ```0```
+
+- Возможное решение данной проблемы
+
+```go
+func merge(a, b <-chan int) <-chan int {
+	c := make(chan int)
+	var once sync.Once
+	done := struct {
+		d1, d2 bool
+	}{}
+	go func() {
+		for {
+			select {
+			case v, ok := <-a:
+				if ok {
+					c <- v
+				} else {
+					done.d1 = true
+					if done.d2 {
+						once.Do(func() {
+							close(c)
+						})
+						break
+					}
+				}
+			case v, ok := <-b:
+				if ok {
+					c <- v
+				} else {
+					done.d2 = true
+					if done.d1 {
+						once.Do(func() {
+							close(c)
+						})
+						break
+					}
+				}
+			}
+		}
+	}()
+	return c
+}
 ```
