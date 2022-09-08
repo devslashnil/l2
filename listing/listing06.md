@@ -23,6 +23,5 @@ func modifySlice(i []string) {
 
 Ответ:
 ```
-...
-
+[3 2 3]
 ```
